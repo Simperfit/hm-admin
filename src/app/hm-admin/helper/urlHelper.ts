@@ -1,17 +1,18 @@
+import { URLSearchParams } from '@angular/http';
 export const urlHelper = {
 
   /**
    * get path with params
    *
    * @param {string} url
-   * @param {string} params
+   * @param {any} additionnalParams
    *
    * @returns {string}
    */
-  getPath(url: string, addiionnalParams: any): string {
+  getPath(url: string, additionnalParams: any): string {
+    console.log(url);
     const [path, ] = url.split('?');
-
-    return path + urlHelper.getParams(url, addiionnalParams);
+    return path + urlHelper.getParams(url, additionnalParams);
   },
 
   /**
@@ -23,14 +24,14 @@ export const urlHelper = {
    * @returns {string}
    */
   getParams(url: string, params: any): string {
-    const currentParams = urlHelper.getUrlParams(url),
-      mergedParams = Object.assign({}, currentParams, params),
-      urlParams: string = Object.keys(mergedParams).map(key => {
-          return `${key}=${mergedParams[key]}`;
-        })
-        .join('&');
+    const currentParams = urlHelper.getUrlParams(url);
 
-    return urlParams ? `?${urlParams}` : '';
+    Object.keys(params).forEach(key => {
+          currentParams.set(key, params[key]);
+        });
+
+
+    return currentParams ? currentParams.toString() : '';
   },
 
   /**
@@ -40,15 +41,15 @@ export const urlHelper = {
    *
    * @returns {any}
    */
-  getUrlParams(url): any {
-    let urlParams = {};
+  getUrlParams(url): URLSearchParams {
+    let urlParams: URLSearchParams;
     const [, ...params] = url.split(/[\?\&]/g);
 
     params.forEach(param => {
       const [, key, value, ] = param.match(/(\w*)=(\w*)/);
-
+      let urlParams: URLSearchParams;
       if (key !== undefined) {
-        Object.defineProperty(urlParams, key, {value: value, writable: true, enumerable: true});
+        urlParams.set(key, value);
       }
     });
 

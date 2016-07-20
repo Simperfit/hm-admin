@@ -31,6 +31,7 @@ export class APIService {
    * Get collection by URL
    *
    * @param {string} path
+   * @param {any} params
    *
    * @returns {Observable<PagedCollection|null>}
    */
